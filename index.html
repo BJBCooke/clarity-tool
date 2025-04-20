@@ -73,15 +73,15 @@
     <p><strong>Estimate Your Monthly Fixed Expenses</strong></p>
     <p>Enter your fixed expenses and choose whether the amount is monthly or annual.</p>
     <table>
-      <tr><td>Rent/Mortgage</td><td><input type="number" id="rent"></td><td><select id="rentFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
-      <tr><td>Insurance</td><td><input type="number" id="insurance"></td><td><select id="insuranceFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
-      <tr><td>Licensing</td><td><input type="number" id="licensing"></td><td><select id="licensingFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
-      <tr><td>Loans</td><td><input type="number" id="loans"></td><td><select id="loansFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
-      <tr><td>Vehicle</td><td><input type="number" id="vehicle"></td><td><select id="vehicleFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
-      <tr><td>Professional Services</td><td><input type="number" id="services"></td><td><select id="servicesFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
-      <tr><td>Utilities</td><td><input type="number" id="utilities"></td><td><select id="utilitiesFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
-      <tr><td>Marketing</td><td><input type="number" id="marketing"></td><td><select id="marketingFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
-      <tr><td>Wages</td><td><input type="number" id="wages"></td><td><select id="wagesFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Rent/Mortgage</td><td><input type="number" id="rent" oninput="updateFixedTotal()"></td><td><select id="rentFreq" onchange="updateFixedTotal()"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Insurance</td><td><input type="number" id="insurance" oninput="updateFixedTotal()"></td><td><select id="insuranceFreq" onchange="updateFixedTotal()"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Licensing</td><td><input type="number" id="licensing" oninput="updateFixedTotal()"></td><td><select id="licensingFreq" onchange="updateFixedTotal()"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Loans</td><td><input type="number" id="loans" oninput="updateFixedTotal()"></td><td><select id="loansFreq" onchange="updateFixedTotal()"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Vehicle</td><td><input type="number" id="vehicle" oninput="updateFixedTotal()"></td><td><select id="vehicleFreq" onchange="updateFixedTotal()"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Professional Services</td><td><input type="number" id="services" oninput="updateFixedTotal()"></td><td><select id="servicesFreq" onchange="updateFixedTotal()"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Utilities</td><td><input type="number" id="utilities" oninput="updateFixedTotal()"></td><td><select id="utilitiesFreq" onchange="updateFixedTotal()"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Marketing</td><td><input type="number" id="marketing" oninput="updateFixedTotal()"></td><td><select id="marketingFreq" onchange="updateFixedTotal()"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Wages</td><td><input type="number" id="wages" oninput="updateFixedTotal()"></td><td><select id="wagesFreq" onchange="updateFixedTotal()"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
     </table>
     <p><strong>Total Monthly Fixed Expenses:</strong> $<span id="monthlyTotal">0.00</span></p>
     <button onclick="nextStep()">Next</button>
@@ -89,7 +89,6 @@
 
   <div class="step">
     <p><strong>What is your Average Order Value?</strong></p>
-    <p>This is how much customers usually pay you per event or order.</p>
     <input type="number" id="avgOrder" placeholder="e.g. $150">
     <button onclick="nextStep()">Next</button>
   </div>
@@ -135,7 +134,6 @@
   const steps = document.querySelectorAll(".step");
 
   function nextStep() {
-    if (currentStep === 1) updateFixedTotal();
     steps[currentStep].classList.remove("active");
     currentStep++;
     steps[currentStep].classList.add("active");
