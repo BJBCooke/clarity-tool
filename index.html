@@ -9,12 +9,12 @@
       background-color: #f4f9f9;
       color: #333;
       padding: 20px;
-      max-width: 700px;
+      max-width: 800px;
       margin: auto;
     }
     .step { display: none; }
     .step.active { display: block; }
-    input, button {
+    input, select, button {
       padding: 10px;
       font-size: 16px;
       width: 100%;
@@ -50,9 +50,9 @@
       border-collapse: collapse;
     }
     table td {
-      padding: 4px;
+      padding: 6px;
     }
-    table input {
+    table input, table select {
       width: 100%;
     }
   </style>
@@ -71,14 +71,19 @@
 
   <div class="step">
     <p><strong>Estimate Your Monthly Fixed Expenses</strong></p>
-    <p>Enter either the monthly or annual cost for each category. We'll calculate your total monthly expenses.</p>
+    <p>Enter your fixed expenses and choose whether the amount is monthly or annual.</p>
     <table>
-      <tr><td>Rent</td><td><input type="number" id="rentM"></td><td><input type="number" id="rentY" placeholder="Annual"></td></tr>
-      <tr><td>Insurance</td><td><input type="number" id="insM"></td><td><input type="number" id="insY"></td></tr>
-      <tr><td>Licensing</td><td><input type="number" id="licM"></td><td><input type="number" id="licY"></td></tr>
-      <tr><td>Vehicle</td><td><input type="number" id="vehM"></td><td><input type="number" id="vehY"></td></tr>
-      <tr><td>Staffing</td><td><input type="number" id="staffM"></td><td><input type="number" id="staffY"></td></tr>
+      <tr><td>Rent/Mortgage</td><td><input type="number" id="rent"></td><td><select id="rentFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Insurance</td><td><input type="number" id="insurance"></td><td><select id="insuranceFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Licensing</td><td><input type="number" id="licensing"></td><td><select id="licensingFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Loans</td><td><input type="number" id="loans"></td><td><select id="loansFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Vehicle</td><td><input type="number" id="vehicle"></td><td><select id="vehicleFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Professional Services</td><td><input type="number" id="services"></td><td><select id="servicesFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Utilities</td><td><input type="number" id="utilities"></td><td><select id="utilitiesFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Marketing</td><td><input type="number" id="marketing"></td><td><select id="marketingFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
+      <tr><td>Wages</td><td><input type="number" id="wages"></td><td><select id="wagesFreq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></td></tr>
     </table>
+    <p><strong>Total Monthly Fixed Expenses:</strong> $<span id="monthlyTotal">0.00</span></p>
     <button onclick="nextStep()">Next</button>
   </div>
 
@@ -91,7 +96,6 @@
 
   <div class="step">
     <p><strong>What are your Variable Expenses per Order?</strong></p>
-    <p>These are the costs that change depending on how many events you do — like food, packaging, and supplies.</p>
     <input type="number" id="variable" placeholder="e.g. $35">
     <button onclick="nextStep()">Next</button>
   </div>
@@ -131,6 +135,7 @@
   const steps = document.querySelectorAll(".step");
 
   function nextStep() {
+    if (currentStep === 1) updateFixedTotal();
     steps[currentStep].classList.remove("active");
     currentStep++;
     steps[currentStep].classList.add("active");
@@ -141,20 +146,19 @@
   }
 
   function getMonthlyFixedExpenses() {
-    const items = [
-      ['rentM', 'rentY'],
-      ['insM', 'insY'],
-      ['licM', 'licY'],
-      ['vehM', 'vehY'],
-      ['staffM', 'staffY']
-    ];
+    const ids = ['rent', 'insurance', 'licensing', 'loans', 'vehicle', 'services', 'utilities', 'marketing', 'wages'];
     let total = 0;
-    for (let [monthly, annual] of items) {
-      const m = parseFloat(document.getElementById(monthly).value) || 0;
-      const y = parseFloat(document.getElementById(annual).value) || 0;
-      total += m + (y / 12);
-    }
+    ids.forEach(id => {
+      const val = parseFloat(document.getElementById(id).value) || 0;
+      const freq = document.getElementById(id + 'Freq').value;
+      total += freq === 'monthly' ? val : val / 12;
+    });
     return total;
+  }
+
+  function updateFixedTotal() {
+    const total = getMonthlyFixedExpenses();
+    document.getElementById("monthlyTotal").innerText = formatNumber(total);
   }
 
   function calculate() {
