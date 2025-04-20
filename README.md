@@ -1,0 +1,1 @@
+This is just a basic calculator that will enable people to type in their desired income, fixed expenses and product/service info to see what their annual sales volumn needs to look like. Still a work in progress. 
