@@ -1,1 +1,156 @@
-<!DOCTYPE html><html><head><title>Placeholder</title></head><body>This is a placeholder. Full content will be rebuilt after reset.</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clarity Creator Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f9f9;
+      color: #333;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .step { display: none; }
+    .step.active { display: block; }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    button {
+      background-color: #008080;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #006666;
+    }
+    .result {
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .explanation {
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Clarity Creator Tool</h2>
+<div id="wizard">
+
+  <div class="step active">
+    <p><strong>What is your Annual Income Goal?</strong></p>
+    <p>Your annual income goal is what you want to be able to pay yourself.</p>
+    <input type="number" id="income" placeholder="e.g. $60000">
+    <button onclick="nextStep()">Next</button>
+  </div>
+
+  <div class="step">
+    <p><strong>What are your Monthly Fixed Expenses?</strong></p>
+    <p>Estimate total monthly business expenses like rent, licensing, insurance, and staff.</p>
+    <input type="number" id="fixed" placeholder="e.g. $1500">
+    <button onclick="nextStep()">Next</button>
+  </div>
+
+  <div class="step">
+    <p><strong>What is your Average Order Value?</strong></p>
+    <p>This is how much customers usually pay you per event or order.</p>
+    <input type="number" id="avgOrder" placeholder="e.g. $150">
+    <button onclick="nextStep()">Next</button>
+  </div>
+
+  <div class="step">
+    <p><strong>What are your Variable Expenses per Order?</strong></p>
+    <p>These are the costs that change depending on how many events you do — like food, packaging, and supplies.</p>
+    <input type="number" id="variable" placeholder="e.g. $35">
+    <button onclick="nextStep()">Next</button>
+  </div>
+
+  <div class="step">
+    <p><strong>How many Days per Week are you open?</strong></p>
+    <input type="number" id="daysOpen" placeholder="e.g. 5">
+    <button onclick="nextStep()">Next</button>
+  </div>
+
+  <div class="step">
+    <p><strong>Where can we send your results?</strong></p>
+    <input type="text" id="name" placeholder="Your First Name">
+    <input type="email" id="email" placeholder="Your Email Address">
+    <button onclick="submitEmail()">See My Results</button>
+  </div>
+
+  <div class="step">
+    <h3>Your Results</h3>
+    <p class="result" id="ordersResult"></p>
+    <div class="explanation">This is how many orders you need per month to meet your income goal after covering expenses.</div>
+    <p class="result" id="dailySalesResult"></p>
+    <div class="explanation">This is how much you need to sell per day, based on the number of days you're open.</div>
+    <p class="result" id="annualSalesResult"></p>
+    <div class="explanation">This is the total annual revenue your business needs to generate to reach your goal.</div>
+    <button onclick="window.location.href='https://your-modern-community-link.com'">Join the Clarity Seminar</button>
+  </div>
+
+</div>
+
+<footer>Powered by Seize Your Day Coaching</footer>
+
+<script>
+  let currentStep = 0;
+  const steps = document.querySelectorAll(".step");
+
+  function nextStep() {
+    steps[currentStep].classList.remove("active");
+    currentStep++;
+    steps[currentStep].classList.add("active");
+  }
+
+  function calculate() {
+    const income = parseFloat(document.getElementById("income").value) || 0;
+    const fixed = parseFloat(document.getElementById("fixed").value) || 0;
+    const avgOrder = parseFloat(document.getElementById("avgOrder").value) || 0;
+    const variable = parseFloat(document.getElementById("variable").value) || 0;
+    const daysOpen = parseFloat(document.getElementById("daysOpen").value) || 0;
+
+    const monthlyIncome = income / 12;
+    const profitPerOrder = avgOrder - variable;
+    const ordersPerMonth = (monthlyIncome + fixed) / profitPerOrder;
+    const dailyOrders = ordersPerMonth / (4.3 * daysOpen);
+    const dailySales = dailyOrders * avgOrder;
+    const annualSales = ordersPerMonth * 12 * avgOrder;
+
+    document.getElementById("ordersResult").innerText = `📦 Orders Per Month Needed: ${ordersPerMonth.toFixed(1)}`;
+    document.getElementById("dailySalesResult").innerText = `💵 Sales Per Day: $${dailySales.toFixed(2)}`;
+    document.getElementById("annualSalesResult").innerText = `📈 Annual Sales Volume: $${annualSales.toFixed(2)}`;
+    
+    nextStep();
+  }
+
+  function submitEmail() {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+
+    if (!name || !email) {
+      alert("Please enter both name and email.");
+      return;
+    }
+
+    console.log("Captured:", name, email);
+    calculate();
+  }
+</script>
+
+</body>
+</html>
