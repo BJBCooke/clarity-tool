@@ -44,6 +44,17 @@
       font-size: 14px;
       color: #888;
     }
+    table {
+      width: 100%;
+      margin-top: 10px;
+      border-collapse: collapse;
+    }
+    table td {
+      padding: 4px;
+    }
+    table input {
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -59,9 +70,15 @@
   </div>
 
   <div class="step">
-    <p><strong>What are your Monthly Fixed Expenses?</strong></p>
-    <p>Estimate total monthly business expenses like rent, licensing, insurance, and staff.</p>
-    <input type="number" id="fixed" placeholder="e.g. $1500">
+    <p><strong>Estimate Your Monthly Fixed Expenses</strong></p>
+    <p>Enter either the monthly or annual cost for each category. We'll calculate your total monthly expenses.</p>
+    <table>
+      <tr><td>Rent</td><td><input type="number" id="rentM"></td><td><input type="number" id="rentY" placeholder="Annual"></td></tr>
+      <tr><td>Insurance</td><td><input type="number" id="insM"></td><td><input type="number" id="insY"></td></tr>
+      <tr><td>Licensing</td><td><input type="number" id="licM"></td><td><input type="number" id="licY"></td></tr>
+      <tr><td>Vehicle</td><td><input type="number" id="vehM"></td><td><input type="number" id="vehY"></td></tr>
+      <tr><td>Staffing</td><td><input type="number" id="staffM"></td><td><input type="number" id="staffY"></td></tr>
+    </table>
     <button onclick="nextStep()">Next</button>
   </div>
 
@@ -96,6 +113,8 @@
     <h3>Your Results</h3>
     <p class="result" id="ordersResult"></p>
     <div class="explanation">This is how many orders you need per month to meet your income goal after covering expenses.</div>
+    <p class="result" id="ordersPerDay"></p>
+    <div class="explanation">This is how many orders you need to complete per day you're open.</div>
     <p class="result" id="dailySalesResult"></p>
     <div class="explanation">This is how much you need to sell per day, based on the number of days you're open.</div>
     <p class="result" id="annualSalesResult"></p>
@@ -117,9 +136,30 @@
     steps[currentStep].classList.add("active");
   }
 
+  function formatNumber(n) {
+    return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function getMonthlyFixedExpenses() {
+    const items = [
+      ['rentM', 'rentY'],
+      ['insM', 'insY'],
+      ['licM', 'licY'],
+      ['vehM', 'vehY'],
+      ['staffM', 'staffY']
+    ];
+    let total = 0;
+    for (let [monthly, annual] of items) {
+      const m = parseFloat(document.getElementById(monthly).value) || 0;
+      const y = parseFloat(document.getElementById(annual).value) || 0;
+      total += m + (y / 12);
+    }
+    return total;
+  }
+
   function calculate() {
     const income = parseFloat(document.getElementById("income").value) || 0;
-    const fixed = parseFloat(document.getElementById("fixed").value) || 0;
+    const fixed = getMonthlyFixedExpenses();
     const avgOrder = parseFloat(document.getElementById("avgOrder").value) || 0;
     const variable = parseFloat(document.getElementById("variable").value) || 0;
     const daysOpen = parseFloat(document.getElementById("daysOpen").value) || 0;
@@ -127,26 +167,25 @@
     const monthlyIncome = income / 12;
     const profitPerOrder = avgOrder - variable;
     const ordersPerMonth = (monthlyIncome + fixed) / profitPerOrder;
-    const dailyOrders = ordersPerMonth / (4.3 * daysOpen);
-    const dailySales = dailyOrders * avgOrder;
+    const ordersPerDay = ordersPerMonth / (4.3 * daysOpen);
+    const dailySales = ordersPerDay * avgOrder;
     const annualSales = ordersPerMonth * 12 * avgOrder;
 
-    document.getElementById("ordersResult").innerText = `📦 Orders Per Month Needed: ${ordersPerMonth.toFixed(1)}`;
-    document.getElementById("dailySalesResult").innerText = `💵 Sales Per Day: $${dailySales.toFixed(2)}`;
-    document.getElementById("annualSalesResult").innerText = `📈 Annual Sales Volume: $${annualSales.toFixed(2)}`;
-    
+    document.getElementById("ordersResult").innerText = `📦 Orders Per Month Needed: ${formatNumber(ordersPerMonth)}`;
+    document.getElementById("ordersPerDay").innerText = `📆 Orders Per Day: ${formatNumber(ordersPerDay)}`;
+    document.getElementById("dailySalesResult").innerText = `💵 Sales Per Day: $${formatNumber(dailySales)}`;
+    document.getElementById("annualSalesResult").innerText = `📈 Annual Sales Volume: $${formatNumber(annualSales)}`;
+
     nextStep();
   }
 
   function submitEmail() {
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
-
     if (!name || !email) {
       alert("Please enter both name and email.");
       return;
     }
-
     console.log("Captured:", name, email);
     calculate();
   }
