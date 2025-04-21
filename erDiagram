@@ -1,0 +1,53 @@
+erDiagram
+    CUSTOMERS {
+        int    CustomerID    PK
+        string CustomerName
+        string ContactName
+        string Email
+        string Phone
+        string BillingTerms
+    }
+    MENUITEMS {
+        int      ItemID       PK
+        string   ItemName
+        string   Category
+        string   Unit
+        currency UnitPrice
+    }
+    ORDERS {
+        int      OrderID      PK
+        date     OrderDate
+        int      CustomerID   FK
+        int      NumberOfGuests
+        date     DateNeeded
+        datetime PickupOrServingTime
+        string   Contact
+        string   Address
+        string   Zone
+        string   ServiceType
+        string   MealType
+        string   StaffingNeeds
+        string   PortionType
+        currency SubTotal
+        currency SalesTax
+        currency Total
+    }
+    ORDERLINES {
+        int      LineID       PK
+        int      OrderID      FK
+        int      ItemID       FK
+        number   Quantity
+        currency UnitPrice
+        currency LineTotal
+    }
+    CONFIGURATION {
+        string   SalesTaxSettings
+        number   SalesTaxRate
+        currency SalesTax
+        string   ServiceType
+        string   MealType
+    }
+
+    CUSTOMERS ||--o{ ORDERS       : "places"
+    ORDERS    ||--|{ ORDERLINES   : "contains"
+    MENUITEMS ||--o{ ORDERLINES   : "lists"
